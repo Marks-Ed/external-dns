@@ -552,6 +552,12 @@ func (sc *serviceSource) extractNodePortTargets(svc *v1.Service) (endpoint.Targe
 		}
 	}
 
+	nodeportTarget, ok := svc.Annotations[nodeportTargetKey]
+	if ok && nodeportTarget == "internal-ip" {
+		log.Debugf("nodeportTarget is %s, so externalIPs are ignored and internalIPs are used instead. internalIPs = %s", nodeportTarget, internalIPs)
+		return internalIPs, nil
+	}
+
 	if len(externalIPs) > 0 {
 		return externalIPs, nil
 	}
